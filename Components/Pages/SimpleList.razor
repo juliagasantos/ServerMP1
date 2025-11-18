@@ -1,0 +1,47 @@
+﻿@page "/SimpleList"
+@inject ICategoryService CategoryService
+@inject IProductService ProductService
+
+@* <h3>Simple List</h3> *@
+@* <h3>Os Grandes Ursinhos Carinhosos</h3> *@
+<h4>Categories</h4>
+<hr />
+<ul class="list-unstyled">
+    <li>
+       <strong> Id  Name </strong>
+    </li>
+    @foreach(var cat in categories)
+    {
+        <li>
+            @cat.Id - @cat.Name
+        </li>
+    }
+</ul>
+
+
+<h4>Poducts</h4>
+<hr />
+<ul class="list-unstyled">
+    <li>
+        <strong> Id  Name </strong>
+    </li>
+    @foreach (var p in products)
+    {
+        <li>
+            @p.Id - @p.Name - @p.Description - @p.UrlImagem - @p.Price - @p.IsActive - @p.Stock.ToString("c") - @(categories.First(c => c.Id == p.CategoryId).Name)
+        </li>
+    }
+</ul>
+
+
+
+@code {
+    List<Category>? categories;
+    List<Product>? products;
+
+    protected override void OnInitialized()
+    {
+        categories = CategoryService.GetCategories();
+        products = ProductService.GetProducts();
+    }
+}
