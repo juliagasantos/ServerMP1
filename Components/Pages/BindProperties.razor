@@ -1,5 +1,105 @@
-﻿<h3>BindProperties</h3>
+﻿@page "/BindProperties"
+@using ServerMP1.DTOs
+<h3>BindProperties</h3>
+@* fundamental para funcionar *@
+@rendermode InteractiveServer
+
+<div class="row" style="box-shadow: 0 0 16px rgba(0, 0, 0, 0.18); border-radius: 10px;">
+
+    @* bind playground *@
+    <div class="col-6 p-3 bg-light" style="border-right:1px solid #989a91; border-radius: 10px 0 0 10px;">
+        <h3 style="color:green; font-weight:700;">Product - Data Binding Summary</h3>
+        <hr />
+        <ul class="list-unstyled" style="display:flex; flex-direction:column; gap:1rem; width:100%;">
+
+            <li><strong style="color:green;">Id:</strong>  @product.Id</li>
+            <li style="display:flex; flex-direction:column;"><strong style="color:green;">Name:</strong> <input style="border-radius:8px; padding:5px; border:1px solid #989a91;" type="text" @bind-value="@product.Name" @bind-value:event="oninput" /></li>
+            <li style="display:flex; flex-direction:column;"><strong style="color:green;">Description:</strong> <input style="border-radius:8px; padding:5px; border:1px solid #989a91;" type="text" @bind-value="@product.Description" @bind-value:event="oninput" /></li>
+            <li style="display:flex; flex-direction:column;"><strong style="color:green;">UrlImg:</strong> <img src="@product.UrlImg" style="width:150px; border-radius:8px; border:1px solid #989a91;" /></li>
+            <li>
+                <!-- InputFile para selecionar uma nova imagem -->
+                <InputFile OnChange="OnImageSelected" />
+            </li>
+            <li style="display:flex; flex-direction:column;"><strong style="color:green;"> Price:</strong> <input style="border-radius:8px; padding:5px; border:1px solid #989a91;" type="number" @bind-value="@product.Price" @bind-value:event="oninput" /></li>
+            <li style="display:flex; flex-direction:column;"><strong style="color:green;">Stock:</strong> <input style="border-radius:8px; padding:5px; border:1px solid #989a91;" type="number" @bind-value="@product.Stock" @bind-value:event="oninput" /></li>
+            <li><strong style="color:green;">IsActive:</strong> <input style="border-radius:8px; padding:5px; border:1px solid #989a91;" type="checkbox" @bind="@product.IsActive" /></li>
+            <li>
+                <strong style="color:green;">Categories:</strong>
+                <select @bind=@selectedCategory>
+                    @foreach (var cat in product.Categories)
+                    {
+                        <option value="@cat.Name">
+                            @cat.Name
+                        </option>
+                    }
+                </select>
+            </li>
+        </ul>
+
+    </div>
+
+    @* bind data *@
+    <div class="col-6 p-3 bg-light" style="border-radius: 0 10px 10px 0;">
+        <h3 style="color:green; font-weight:700;">Product - Data Binding Summary</h3>
+        <hr />
+        <ul class="list-unstyled" style="display:flex; flex-direction:column; gap:1rem; width:100%;">
+            <li><strong>Id:</strong>  @product.Id</li>
+            <li style="display:flex; flex-direction:column;"><strong>Name:</strong> @product.Name</li>
+            <li style="display:flex; flex-direction:column;"><strong>Description:</strong> @product.Description</li>
+            <li style="display:flex; flex-direction:column;"><strong>UrlImg:</strong> <img src="@product.UrlImg" style="width:150px; border-radius:8px; border:1px solid #333;" /></li>
+            <li style="display:flex; flex-direction:column;"><strong>Price:</strong> @product.Price.ToString("c")</li>
+            <li style="display:flex; flex-direction:column;"><strong>Stock:</strong> @product.Stock</li>
+            <li style="display:flex; flex-direction:column;"><strong>IsActive:</strong> @(product.IsActive ? "Active" : "Inactive")</li>
+            <li style="display:flex; flex-direction:column;"><strong>Categories:</strong> @selectedCategory</li>
+        </ul>
+    </div>
+</div>
+
+
 
 @code {
+    private string selectedCategory = "";
 
+    DTOs.ProductDTO product = new()
+        {
+            Id = 1,
+            Name = "xSalada",
+            Description = "Lanche de salada",
+            UrlImg = "https://www.comidaereceitas.com.br/wp-content/uploads/2025/08/foto-cheese-salada-780x519.jpg",
+            Price = 22.5m,
+            Stock = 12,
+            IsActive = true,
+            Categories = new List<CategoryDTO>
+            {
+                new() {Name = "Lanche"},
+                new() {Name = "Bebida"},
+                new() {Name = "Sobremesa"}
+            }
+        };
+
+    //carregamento da imagem
+    private async Task OnImageSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+
+        if (file is null)
+            return;
+
+    //limita o tamanho só para segurança (ex.: 2mb)
+    using var stream = file.OpenReadStream(maxAllowedSize: 2 * 1024 * 1024);
+        using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+
+        var bytes = ms.ToArray();
+        var base64 = Convert.ToBase64String(bytes);
+
+        //monta data URL e joga direto no UrlImg
+        product.UrlImg = $"data:{file.ContentType};base64,{base64}";
+    }
+
+    protected override void OnInitialized()
+    {
+        selectedCategory = product.Categories.First().Name;
+    }
 }
+
