@@ -1,0 +1,105 @@
+﻿@page "/Detail"
+@using ServerMP1.DTOs
+
+<h3>Detail</h3>
+
+@* playground *@
+<div class="row">
+    <div class="col-12 p-4 bg-light">
+        <h3>Products Playground</h3>
+        @* tabela *@
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Id: </th>
+                    <th>Name: </th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Active</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in listProductsDTOs)
+                {
+                    <tr>
+                        <td>@p.Id</td>
+                        <td>
+                            Name:
+                            <input type="text" @bind-value="@p.Name" @bind-value:event="oninput" />
+                        </td>
+
+                        <td>
+                            Price:
+                            <input type="number" @bind-value="@p.Price" @bind-value:event="oninput" />
+                        </td>
+
+                        <td>
+                            Stock:
+                            <input type="number" @bind-value="@p.Stock" @bind-value:event="oninput" />
+                        </td>
+
+                        <td>
+                            Category:
+                            <select @bind="p.CategoryName">
+                                @foreach(var cat in Categories)
+                                {
+                                    <option value="@cat">
+                                        @cat
+                                    </option>
+                                }
+                            </select>
+                        </td>
+
+                        <td>
+                            IsActive:
+                            <input type="checkbox" @bind="@p.IsActive"/>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* summary *@
+<div class="row">
+    <div class="col-12 p-4 bg-light">
+        <h3>Products Summary</h3>
+    </div>
+</div>
+
+@code {
+    private List<ProductDTO> listProductsDTOs = new();
+    private ProductDTO? selectedProduct;
+
+    //Lista para alimentar o select
+    private List<string> Categories = new()
+    {
+        "Lanche",
+        "Bebida",
+        "Sobremesa"
+    };
+
+    //Exibir detalhes
+    private void ShowDetails(ProductDTO product) => selectedProduct = product;
+
+    private void ProductList()
+    {
+        listProductsDTOs = new List<ProductDTO>
+        {
+            new ProductDTO {Id = 1, Name = "X-bacon", Description = "Hamburguer com tudo o que á de bom", Price = 15.00m, Stock = 10, IsActive = true, UrlImg = "https://vocegastro.com.br/app/uploads/2021/11/x-bacon.jpg" ,CategoryName = "Lanche" },
+            new ProductDTO {Id = 1, Name = "Pepsi", Description = "Bebida black geladinha", Price = 8.00m, Stock = 10, IsActive = true, UrlImg = "https://admin.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/03/230327115255-embargoed-01-pepsi-new-logo-2023.webp" ,CategoryName = "Bebida" },
+            new ProductDTO {Id = 1, Name = "Bolo de Murango", Description = "Aquele do Pica-Pau", Price = 25.00m, Stock = 10, IsActive = true, UrlImg = "https://i.pinimg.com/736x/77/c1/33/77c13333446751de8bb1d8d352661ee4.jpg" ,CategoryName = "Sobremesa" }
+        };
+
+        //outro metodo para criar
+        // listProductsDTOs.Add(new()
+        // {
+        // });
+    }
+
+    protected override void OnInitialized()
+    {
+        ProductList();
+    }
+}

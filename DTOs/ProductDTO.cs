@@ -10,6 +10,9 @@
         public int Stock { get; set; }
 
         public bool IsActive { get; set; }
+
+        //Categoria escolhida no select
+        public string CategoryName { get; set; } = string.Empty;
         public List<CategoryDTO> Categories { get; set; } = new ();
 
     }
