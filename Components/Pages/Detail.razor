@@ -1,9 +1,12 @@
 ﻿@page "/Detail"
 @using ServerMP1.DTOs
 
+@rendermode InteractiveServer
+
 <h3>Detail</h3>
 
 @* playground *@
+
 <div class="row">
     <div class="col-12 p-4 bg-light">
         <h3>Products Playground</h3>
@@ -41,7 +44,7 @@
                         <td>
                             Category:
                             <select @bind="p.CategoryName">
-                                @foreach(var cat in Categories)
+                                @foreach (var cat in Categories)
                                 {
                                     <option value="@cat">
                                         @cat
@@ -52,7 +55,7 @@
 
                         <td>
                             IsActive:
-                            <input type="checkbox" @bind="@p.IsActive"/>
+                            <input type="checkbox" @bind="@p.IsActive" />
                         </td>
                     </tr>
                 }
@@ -62,10 +65,93 @@
 </div>
 
 @* summary *@
+
 <div class="row">
     <div class="col-12 p-4 bg-light">
-        <h3>Products Summary</h3>
+        <h3>Produts Summary </h3>
+
+        @* filtro *@
+        <div class="col-2 mb-3">
+            <label class="form-label">
+                Filtrar por categoria
+            </label>
+            <select class="form-select" @bind="selectedCategoryFilter">
+                <option value="">Todas</option>
+                @foreach (var cat in Categories)
+                {
+                    <option value="@cat">@cat</option>
+                }
+            </select>
+        </div>
+
+        @* //tabela  *@
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID				</th>
+                    <th>Name </th>
+                    <th>Price</th>
+                    <th>Stock</th>.
+                    <th>Category</th>
+                    <th>Active</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in FilterProducts)
+                {
+                    <tr>
+                        <td>@p.Id				</td>
+                        <td>@p.Name </td>
+                        <td>@p.Price.ToString("c")</td>
+                        <td>@p.Stock</td>
+                        <td>@p.CategoryName</td>
+                        <td>@(p.IsActive ? "Yes" : "No")</td>
+                        <td><button class="btn btn-sm btn-primary" @onclick="@(()=>ShowDetails(p))">Details</button></td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+        @* area de detalhes *@
+        @if (selectedProduct != null)
+        {
+            <div class="card mt-3" style="max-width:400px;">
+                <div class="card-header">
+                    <strong>Details of @selectedProduct.Name</strong>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Id: </strong>@selectedProduct.Id
+                    </p>
+                    <p>
+                        <strong>Description: </strong>  @selectedProduct.Description
+                    </p>
+                    <p>
+                        <strong>Image: </strong>@selectedProduct.Description
+                        <br />
+                        <img src="@selectedProduct.UrlImg" style="width:200px; border-radius:8px; border:1px solid #000;" alt="Alternate Text" />
+                    </p>
+                    <p>
+                        <strong>Price: </strong>  @selectedProduct.Price.ToString("c")
+                    </p>
+                    <p>
+                        <strong>Stock: </strong>  @selectedProduct.Stock
+                    </p>
+                    <p>
+                        <strong>Active: </strong>  @(selectedProduct.IsActive ? "Yes" : "No")
+                    </p>
+                    <p>
+                        <strong>Categories: </strong>  @selectedProduct.CategoryName
+                    </p>
+
+                </div>
+            </div>
+        }
+
     </div>
+
+
 </div>
 
 @code {
@@ -93,11 +179,18 @@
         };
 
         //outro metodo para criar
-        // listProductsDTOs.Add(new()
-        // {
-        // });
+        //listProductsDTOs.Add(new()
+        //{
+        //});
     }
 
+    //filtro
+    private string selectedCategoryFilter = "";
+
+    //colecao para filtro
+    private IEnumerable<ProductDTO> FilterProducts => string.IsNullOrWhiteSpace(selectedCategoryFilter) ? listProductsDTOs : listProductsDTOs.Where(p => p.CategoryName == selectedCategoryFilter);
+
+    //inicializar
     protected override void OnInitialized()
     {
         ProductList();
