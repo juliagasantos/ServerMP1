@@ -10,6 +10,7 @@
         public int Stock { get; set; }
 
         public bool IsActive { get; set; }
+        public bool IsFavorite { get; set; }
 
         //Categoria escolhida no select
         public string CategoryName { get; set; } = string.Empty;

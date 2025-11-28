@@ -10,7 +10,7 @@
         public int Stock { get; set; }
 
         public bool IsActive { get; set; }
-
+        public bool IsFavorite { get; set; }
         public int CategoryId { get; set; }
         public virtual List<Category> Categories { get; set; } = new();
     }

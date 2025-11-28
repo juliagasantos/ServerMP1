@@ -9,8 +9,23 @@
     <h3>Products Playground</h3>
     <div class="row">
         <div class="col-6 p-4">
+            <p>Exercicio 1 - Desconto de 10% em todos os produtos</p>
+            <button class="btn btn-warning mb-3" @onclick="ApplydiscountToAll">Aplicar 10% de desconto</button>
+            <hr />
+            <p>Exercicio 2 - Resetar desconto</p>
+            <button class="btn btn-warning mb-3" @onclick="ResetList">Resetar desconto aplicado</button>
         </div>
         <div class="col-6 p-4">
+            <p>Exercicio 3 - Aumentar R$10,00 somente da categoria selecionada</p>
+            <select class="form-select mb-3" @onchange="CategorySelected">
+                <option value="">Selecione uma categoria</option>
+                <option value="Lanche">Lanche</option>
+                <option value="Bebida">Bebida</option>
+                <option value="Sobremesa">Sobremesa</option>
+            </select>
+            <hr />
+            <p>Exercicio 4 - favoritar produto</p>
+            <input  type="checkbox" @onclick="Favoritar" />
         </div>
     </div>
 </div>
@@ -27,7 +42,7 @@
                 <th>Stock</th>
                 <th>Category</th>
                 <th>Active</th>
-                <th></th>
+                <th>Favoritar</th>
             </tr>
         </thead>
         <tbody>
@@ -40,7 +55,7 @@
                     <td>@p.Stock</td>
                     <td>@p.CategoryName</td>
                     <td>@(p.IsActive ? "Yes" : "No")</td>
-                    <td></td>
+                    <td><input type="checkbox" @onclick="Favoritar" /> @(p.IsFavorite ? "★" : "☆")</td>
                 </tr>
             }
         </tbody>
@@ -56,14 +71,16 @@
         "Sobremesa"
     };
 
+    private string selectedCategory = "";
+
     private List<ProductDTO> listProductsDTOs = new();
     private void ProductList()
     {
         listProductsDTOs = new List<ProductDTO>
         {
             new ProductDTO {Id = 1, Name = "X-bacon", Description = "Hamburguer com tudo o que á de bom", Price = 15.00m, Stock = 10, IsActive = true, UrlImg = "https://vocegastro.com.br/app/uploads/2021/11/x-bacon.jpg" ,CategoryName = "Lanche" },
-            new ProductDTO {Id = 1, Name = "Pepsi", Description = "Bebida black geladinha", Price = 8.00m, Stock = 10, IsActive = true, UrlImg = "https://admin.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/03/230327115255-embargoed-01-pepsi-new-logo-2023.webp" ,CategoryName = "Bebida" },
-            new ProductDTO {Id = 1, Name = "Bolo de Murango", Description = "Aquele do Pica-Pau", Price = 25.00m, Stock = 10, IsActive = true, UrlImg = "https://i.pinimg.com/736x/77/c1/33/77c13333446751de8bb1d8d352661ee4.jpg" ,CategoryName = "Sobremesa" }
+            new ProductDTO {Id = 2, Name = "Pepsi", Description = "Bebida black geladinha", Price = 8.00m, Stock = 10, IsActive = true, UrlImg = "https://admin.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/03/230327115255-embargoed-01-pepsi-new-logo-2023.webp" ,CategoryName = "Bebida" },
+            new ProductDTO {Id = 3, Name = "Bolo de Murango", Description = "Aquele do Pica-Pau", Price = 25.00m, Stock = 10, IsActive = true, UrlImg = "https://i.pinimg.com/736x/77/c1/33/77c13333446751de8bb1d8d352661ee4.jpg" ,CategoryName = "Sobremesa" }
         };
     }
 
@@ -71,5 +88,41 @@
     protected override void OnInitialized()
     {
         ProductList();
+    }
+
+    //Exercicio 1 - desconto
+    private void ApplydiscountToAll()
+    {
+        foreach (var p in listProductsDTOs)
+            p.Price = Math.Round(p.Price * 0.9m, 2);
+    }
+
+    //Exercicio 2 - reset
+    private void ResetList()
+    {
+        listProductsDTOs.Clear();
+        ProductList();
+    }
+
+    //Exercicio 3 - aumentar R$10,00
+    private void CategorySelected(ChangeEventArgs e)
+    {
+        var selected = e.Value?.ToString() ?? "";
+
+        if (string.IsNullOrWhiteSpace(selected))
+            return;
+
+        foreach (var p in listProductsDTOs)
+        {
+            if (p.CategoryName.Equals(selected, StringComparison.OrdinalIgnoreCase))
+            {
+                p.Price = Math.Round(p.Price + 10m, 2);
+            }
+        }
+    }
+
+    private void Favoritar()
+    {
+
     }
 }
