@@ -1,0 +1,153 @@
+﻿@page "/FormProduct"
+@using ServerMP1.DTOs
+@rendermode InteractiveServer
+
+<h3>FormProduct</h3>
+
+@* form *@
+<div class="container mt-4">
+    <h3 class="mb-3">Cadastro de Produto</h3>
+        <div class="row g-3">
+
+            <div class="col-md-2">
+                <label class="form-label">Id</label>
+                <input type="number" class="form-control" placeholder="Ex: 1" @bind="novoProduto.Id">
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+            <input type="text" class="form-control" placeholder="Nome do produto" @bind="novoProduto.Name">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Category</label>
+            <select class="form-select" @bind="novoProduto.CategoryName">
+                    <option value="">Selecione...</option>
+                    <option value="Lanche">Lanche</option>
+                    <option value="Bebida">Bebida</option>
+                    <option value="Sobremesa">Sobremesa</option>
+                </select>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Description</label>
+            <textarea class="form-control" rows="3" placeholder="Descrição do produto" @bind-value="novoProduto.Description"
+                      @bind-value:event="oninput"></textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">UrlImg</label>
+            <input type="text" class="form-control" placeholder="Link da imagem"
+                   @bind-value="novoProduto.UrlImg" @bind-value:event="oninput">
+
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Price</label>
+            <input type="number" step="0.01" class="form-control" placeholder="Ex: 15.00"
+                   @bind-value="novoProduto.Price" @bind-value:event="oninput">
+
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Stock</label>
+            <input type="number" class="form-control" placeholder="Quantidade em estoque"
+                   @bind-value="novoProduto.Stock" @bind-value:event="oninput">
+
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-check mt-4">
+                <input type="checkbox" class="form-check-input"
+                       @bind="novoProduto.IsActive">
+
+                    <label class="form-check-label" for="ativoCheck">Ativo</label>
+                </div>
+            </div>
+
+            @* <div class="col-md-3"> *@
+            @*     <div class="form-check mt-4"> *@
+            @*     <input type="checkbox" class="form-check-input" *@
+            @*            @bind="novoProduto.IsFavorite"> *@
+
+            @*         <label class="form-check-label" for="favoriteCheck">Favorito</label> *@
+            @*     </div> *@
+            @* </div> *@
+
+            <div class="col-12 mt-3">
+            <button class="btn btn-primary" @onclick="Salvar">Salvar</button>
+            <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+
+            </div>
+
+        </div>
+
+</div>
+
+@* summary *@
+<div class="col-12 p-4 bg-light">
+    <h3>Products Playground</h3>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Category</th>
+                <th>Active</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in listProductsDTOs)
+            {
+                <tr>
+                    <td>@p.Id</td>
+                    <td>@p.Name</td>
+                    <td>@p.Price</td>
+                    <td>@p.Stock</td>
+                    <td>@p.CategoryName</td>
+                    <td>@(p.IsActive ? "Yes" : "No")</td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private List<ProductDTO> listProductsDTOs = new();
+    private ProductDTO novoProduto = new ProductDTO();
+
+    private void ProductList()
+    {
+        listProductsDTOs = new List<ProductDTO>
+        {
+            new ProductDTO {Id = 1, Name = "X-bacon", Description = "Hamburguer com tudo o que á de bom", Price = 15.00m, Stock = 10, IsActive = true, UrlImg = "https://vocegastro.com.br/app/uploads/2021/11/x-bacon.jpg" ,CategoryName = "Lanche" },
+            new ProductDTO {Id = 2, Name = "Pepsi", Description = "Bebida black geladinha", Price = 8.00m, Stock = 10, IsActive = true, UrlImg = "https://admin.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/03/230327115255-embargoed-01-pepsi-new-logo-2023.webp" ,CategoryName = "Bebida" },
+            new ProductDTO {Id = 3, Name = "Bolo de Murango", Description = "Aquele do Pica-Pau", Price = 25.00m, Stock = 10, IsActive = true, UrlImg = "https://i.pinimg.com/736x/77/c1/33/77c13333446751de8bb1d8d352661ee4.jpg" ,CategoryName = "Sobremesa" }
+        };
+    }
+
+    private void Cancelar()
+    {
+
+        novoProduto = new ProductDTO();
+    }
+
+    private void Salvar()
+    {
+
+        listProductsDTOs.Add(novoProduto);
+
+        // Limpa o formulário (cria um novo)
+        // novoProduto = new ProductDTO();
+    }
+
+    //inicializar
+    protected override void OnInitialized()
+    {
+        ProductList();
+    }
+}

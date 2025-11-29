@@ -24,8 +24,7 @@
                 <option value="Sobremesa">Sobremesa</option>
             </select>
             <hr />
-            <p>Exercicio 4 - favoritar produto</p>
-            <input  type="checkbox" @onclick="Favoritar" />
+            <p>Exercicio 3 - Lista de favoritos</p>
         </div>
     </div>
 </div>
@@ -42,7 +41,7 @@
                 <th>Stock</th>
                 <th>Category</th>
                 <th>Active</th>
-                <th>Favoritar</th>
+                <th>Exercicio 4 - Favoritar </th>
             </tr>
         </thead>
         <tbody>
@@ -55,12 +54,29 @@
                     <td>@p.Stock</td>
                     <td>@p.CategoryName</td>
                     <td>@(p.IsActive ? "Yes" : "No")</td>
-                    <td><input type="checkbox" @onclick="Favoritar" /> @(p.IsFavorite ? "★" : "☆")</td>
+                    <td style="cursor: pointer; font-size:22px;" @onclick="() => Favoritar(p)">
+                        <p class="@(p.IsFavorite ? "orange" : "gray")">
+                            @(p.IsFavorite ? "★" : "❤ ❤️")
+                        </p>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<style>
+    .orange {
+        
+        color: orange;
+    }
+
+    .gray {
+
+        color: gray;
+    }
+</style>
+
 
 @code {
     //Lista para alimentar o select
@@ -121,8 +137,8 @@
         }
     }
 
-    private void Favoritar()
+    private void Favoritar(ProductDTO product)
     {
-
+        product.IsFavorite = !product.IsFavorite;
     }
 }
